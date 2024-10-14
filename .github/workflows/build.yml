@@ -13,15 +13,18 @@ jobs:
     environment: production
 
     steps:
-      # GitHub에 저장된 코드를 CI 서버로 내려받아 뒷 단계에서 사용할 수 있도록 하는 과정
       - name: Checkout
         uses: actions/checkout@v3
 
-      # GitHub Secrets과 로컬 환경에 저장된 값 불러오기
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}   # secret에 저장된 값 불러오기
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
