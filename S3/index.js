@@ -35,14 +35,16 @@ const uploadDirectory = async (bucketName, dirPath, s3Path = '') => {
         await s3.upload(params).promise();
         console.log(`Uploaded: ${s3FilePath}`);
       } catch (error) {
-        console.error(`Error uploading ${file}: ${error.message}`);
+        console.error(`Error uploading ${s3FilePath}: ${error.message}`);
       }
     }
   }
 };
 
-// Windows 바탕 화면의 JSP 디렉토리를 S3에 업로드
-const desktopPath = path.join(process.env.HOME || process.env.USERPROFILE, 'Desktop'); // 사용자 바탕 화면 경로
-const jspDirectoryPath = path.join(desktopPath, 'jsp'); // 바탕 화면의 'jsp' 디렉토리
+// JSP 디렉토리 경로 설정
+const jspDirectoryPath = path.join(__dirname, 'jsp');
 
-uploadDirectory('gichangtest', jspDirectoryPath);
+// 업로드 실행
+uploadDirectory('gichangtest', jspDirectoryPath)
+  .then(() => console.log('Upload completed successfully!'))
+  .catch(error => console.error(`Upload failed: ${error.message}`));
