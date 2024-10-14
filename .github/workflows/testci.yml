@@ -40,4 +40,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
         run: |
-          aws s3 cp --recursive --region ap-northeast-2 S3/dist s3://gichangtest
+          aws s3 cp --recursive --region ap-northeast-2 ./S3/dist s3://gichangtest
