@@ -1,36 +1,43 @@
-name: client
+name: Deploy to EKS
+
 on:
   push:
     branches:
-      - main
+      - main  # main 브랜치에 푸시될 때 실행
+
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout source code.
-        uses: actions/checkout@v2  # 소스 코드 체크아웃 추가
+      - name: Checkout source code
+        uses: actions/checkout@v2
 
-      - name: Install dependencies
-        run: npm install
-        working-directory: ./gitchang-s3
+      - name: Set up JDK 8
+        uses: actions/setup-java@v2
+        with:
+          java-version: '8'
 
-      - name: Build
-        run: npm run build
-        working-directory: ./gitchang-s3
+      - name: Build with Maven
+        run: mvn clean package  # Maven으로 WAR 파일 생성
 
-      - name: SHOW AWS CLI VERSION
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_EC2_METADATA_DISABLED: true
+      - name: Build Docker image
         run: |
-          aws --version
+          docker build -t myapp:latest .  # Docker 이미지 빌드
 
-      - name: Sync Bucket
+      - name: Push Docker image to ECR
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_EC2_METADATA_DISABLED: true
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}  # AWS 키
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # AWS 비밀 키
+          AWS_REGION: 'ap-northeast-2'  # AWS 리전
         run: |
-          aws s3 sync ./build s3://gichangtest --region ap-northeast-2 --delete
-        working-directory: ./gitchang-s3
+          $(aws ecr get-login --no-include-email --region $AWS_REGION)  # ECR 로그인
+          docker tag myapp:latest <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/myapp:latest
+          docker push <ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/myapp:latest  # ECR에 이미지 푸시
+
+      - name: Update EKS deployment
+        env:
+          KUBECONFIG: ${{ secrets.KUBECONFIG }}  # Kubeconfig 파일
+          AWS_REGION: 'ap-northeast-2'  # AWS 리전
+        run: |
+          kubectl set image deployment/myapp myapp=<ACCOUNT_ID>.dkr.ecr.<REGION>.amazonaws.com/myapp:latest  # EKS에 배포 업데이트
