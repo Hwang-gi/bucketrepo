@@ -4,11 +4,12 @@
     "description": "A simple Node.js app to interact with AWS S3",
     "main": "index.js",
     "scripts": {
-        "start": "node index.js"
+        "start": "node index.js",
+        "build": "echo 'No build step defined'" // 여기에 실제 빌드 명령어를 추가하세요
     },
     "dependencies": {
         "aws-sdk": "^2.123.0"
     },
-    "author": "Your Name",
+    "author": "awsgichang",
     "license": "MIT"
 }
