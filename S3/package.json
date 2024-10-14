@@ -10,6 +10,6 @@
     "dependencies": {
         "aws-sdk": "^2.123.0"
     },
-    "author": "Your Name",
+    "author": "awsgichang",
     "license": "MIT"
 }
