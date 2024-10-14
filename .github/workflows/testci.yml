@@ -10,18 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3  # v3로 명시
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # v3로 명시
+        uses: actions/setup-node@v3
         with:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          # S3 디렉토리 내의 package.json 파일을 사용하여 의존성 설치
+          npm install --prefix ./S3
 
       - name: Build project
-        run: npm run build
+        run: |
+          # S3 디렉토리 내의 index.js 파일을 빌드 대상으로 설정
+          npm run build --prefix ./S3
 
       - name: Deploy to S3
         env:
@@ -29,4 +33,5 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
         run: |
+          # dist 디렉토리의 내용을 S3 버킷에 업로드
           aws s3 cp --recursive --region ap-northeast-2 dist s3://gichangtest
