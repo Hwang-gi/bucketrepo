@@ -6,9 +6,10 @@
     "scripts": {
         "start": "node index.js",
         "build": "echo 'No build step defined'"
+    },
     "dependencies": {
         "aws-sdk": "^2.123.0"
     },
-    "author": "awsgichang",
+    "author": "Your Name",
     "license": "MIT"
 }
