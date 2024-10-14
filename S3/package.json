@@ -1,0 +1,15 @@
+{
+    "name": "my-s3-app",
+    "version": "1.0.0",
+    "description": "A simple Node.js app to interact with AWS S3",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "build": "echo 'No build step defined' && npx mkdirp dist"
+    },
+    "dependencies": {
+        "aws-sdk": "^2.123.0"
+    },
+    "author": "awsgichang",
+    "license": "MIT"
+}
