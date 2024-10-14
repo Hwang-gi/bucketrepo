@@ -1,28 +1,27 @@
 name: Main CI
-   
+
 on:
   push:
     branches:
       - main
-   
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: git clone
+      - name: Checkout code
         uses: actions/checkout@v2
-   
-      - name: npm install
+
+      - name: Install dependencies
         run: npm install
-   
-      - name: npm build
+
+      - name: Build project
         run: npm run build
-   
-      - name: deploy
-      - env:
+
+      - name: Deploy to S3
+        env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
-        run:
+        run: |
           aws s3 cp --recursive --region ap-northeast-2 dist s3://gichangtest
-   
