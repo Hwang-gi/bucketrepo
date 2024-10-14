@@ -27,6 +27,8 @@ jobs:
 
       - name: Check dist directory
         run: |
+          cd S3
+          npm install mkdirp --save-dev
           if [ ! -d "./dist" ]; then
             echo "dist directory does not exist!"
             exit 1
