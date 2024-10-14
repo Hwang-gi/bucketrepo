@@ -1,0 +1,26 @@
+{
+    "name": "gitchang-s3",
+    "version": "1.0.0",
+    "description": "gitchang-s3",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "keywords": [
+        "agora",
+        "react",
+        "client"
+    ],
+    "author": "Your Name",
+    "license": "MIT",
+    "dependencies": {
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2"
+    },
+    "devDependencies": {
+        "react-scripts": "^4.0.3"
+    }
+}
