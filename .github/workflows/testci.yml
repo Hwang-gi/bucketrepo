@@ -19,13 +19,18 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # S3 디렉토리 내의 package.json 파일을 사용하여 의존성 설치
           npm install --prefix ./S3
 
       - name: Build project
         run: |
-          # S3 디렉토리 내의 index.js 파일을 빌드 대상으로 설정
           npm run build --prefix ./S3
+
+      - name: Check dist directory
+        run: |
+          if [ ! -d "./dist" ]; then
+            echo "dist directory does not exist!"
+            exit 1
+          fi
 
       - name: Deploy to S3
         env:
@@ -33,5 +38,4 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_EC2_METADATA_DISABLED: true
         run: |
-          # dist 디렉토리의 내용을 S3 버킷에 업로드
           aws s3 cp --recursive --region ap-northeast-2 dist s3://gichangtest
