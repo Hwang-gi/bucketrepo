@@ -17,55 +17,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install AWS SDK
-        run: npm install aws-sdk
+      - name: Install dependencies
+        run: |
+          npm install aws-sdk
 
       - name: Upload JSP files to S3
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          const AWS = require('aws-sdk');
-          const fs = require('fs');
-          const path = require('path');
-
-          // AWS S3 설정
-          AWS.config.update({
-            region: 'ap-northeast-2',
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-          });
-
-          const s3 = new AWS.S3();
-
-          const uploadDirectory = async (bucketName, dirPath, s3Path = '') => {
-            const files = fs.readdirSync(dirPath);
-
-            for (const file of files) {
-              const localFilePath = path.join(dirPath, file);
-              const s3FilePath = path.join(s3Path, file).replace(/\\/g, '/');
-
-              if (fs.lstatSync(localFilePath).isDirectory()) {
-                await uploadDirectory(bucketName, localFilePath, s3FilePath);
-              } else {
-                const fileContent = fs.readFileSync(localFilePath);
-                const params = {
-                  Bucket: bucketName,
-                  Key: s3FilePath,
-                  Body: fileContent
-                };
-
-                try {
-                  await s3.upload(params).promise();
-                  console.log(`Uploaded: ${s3FilePath}`);
-                } catch (error) {
-                  console.error(`Error uploading ${s3FilePath}: ${error.message}`);
-                }
-              }
-            }
-          };
-
-          // JSP 디렉토리 경로
-          const jspDirectoryPath = path.join(__dirname, 'jsp');
-
-          uploadDirectory('gichangtest', jspDirectoryPath);
+          node index.js
