@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@latest  # 최신 버전으로 업데이트
+        uses: actions/checkout@v3  # v3로 명시
 
       - name: Set up Node.js
-        uses: actions/setup-node@latest  # 최신 버전으로 업데이트
+        uses: actions/setup-node@v3  # v3로 명시
         with:
           node-version: '20'
 
