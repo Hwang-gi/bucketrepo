@@ -1,40 +1,48 @@
 const AWS = require('aws-sdk');
+const fs = require('fs');
+const path = require('path');
 
 // AWS S3 설정
 AWS.config.update({
-    region: 'ap-northeast-2', // 사용하려는 AWS 리전
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  region: 'ap-northeast-2', // 사용할 AWS 리전
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 const s3 = new AWS.S3();
 
-// S3 버킷에서 파일 목록 가져오기
-const listFiles = async (bucketName) => {
-    const params = {
-        Bucket: bucketName
-    };
+// 디렉토리 내의 모든 파일을 S3에 업로드하는 함수
+const uploadDirectory = async (bucketName, dirPath, s3Path = '') => {
+  const files = fs.readdirSync(dirPath);
 
-    try {
-        const data = await s3.listObjectsV2(params).promise();
-        console.log('Files in bucket:', data.Contents);
-    } catch (error) {
-        console.error(`Error fetching files: ${error.message}`);
-    }
-};
+  for (const file of files) {
+    const localFilePath = path.join(dirPath, file);
+    const s3FilePath = path.join(s3Path, file).replace(/\\/g, '/'); // Windows 경로를 UNIX 스타일로 변경
 
-// S3에서 파일 다운로드
-const downloadFile = async (bucketName, keyName) => {
-    const params = {
+    if (fs.lstatSync(localFilePath).isDirectory()) {
+      // 디렉토리인 경우 재귀 호출
+      await uploadDirectory(bucketName, localFilePath, s3FilePath);
+    } else {
+      // 파일인 경우 S3에 업로드
+      const fileContent = fs.readFileSync(localFilePath);
+      const params = {
         Bucket: bucketName,
-        Key: keyName
-    };
+        Key: s3FilePath,
+        Body: fileContent
+      };
 
-    try {
-        const data = await s3.getObject(params).promise();
-        const fileContent = data.Body.toString('utf-8'); // 파일 내용을 문자열로 변환
-        console.log(`File content of ${keyName}:`, fileContent);
-    } catch (error) {
-        console.error(`Error downloading file: ${error.message}`);
+      try {
+        await s3.upload(params).promise();
+        console.log(`Uploaded: ${s3FilePath}`);
+      } catch (error) {
+        console.error(`Error uploading ${file}: ${error.message}`);
+      }
     }
+  }
 };
+
+// Windows 바탕 화면의 JSP 디렉토리를 S3에 업로드
+const desktopPath = path.join(process.env.HOME || process.env.USERPROFILE, 'Desktop'); // 사용자 바탕 화면 경로
+const jspDirectoryPath = path.join(desktopPath, 'jsp'); // 바탕 화면의 'jsp' 디렉토리
+
+uploadDirectory('gichangtest', jspDirectoryPath);
