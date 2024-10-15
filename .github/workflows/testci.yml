@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd S3
-          npm install aws-sdk express axios  # express와 axios도 설치
+          npm install aws-sdk
 
       - name: Upload JSP files to S3
         env:
@@ -29,9 +29,3 @@ jobs:
         run: |
           cd S3
           node index.js  # JSP 파일 업로드
-
-      - name: Run app.js
-        run: |
-          cd S3
-          node app.js &  
-          sleep 10 # app.js 실행 및 10초간 대기
