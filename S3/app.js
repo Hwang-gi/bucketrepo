@@ -3,17 +3,16 @@ const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// S3 버킷 URL
-const bucketName = 'gichangtest'; // 사용 중인 버킷 이름
-const s3BaseUrl = `https://${bucketName}.s3.amazonaws.com`;
+// Tomcat 서버 URL
+const tomcatBaseUrl = 'http://localhost:8080'; // Tomcat이 사용하는 기본 포트는 8080입니다.
 
 // JSP 파일 제공을 위한 라우트
 app.get('/jsp/:filename', async (req, res) => {
     const filename = req.params.filename;
-    const fileUrl = `${s3BaseUrl}/${filename}`;
+    const fileUrl = `${tomcatBaseUrl}/yourApp/${filename}`; // Tomcat 애플리케이션의 경로를 설정
 
     try {
-        // S3에서 JSP 파일 가져오기
+        // Tomcat에서 JSP 파일 가져오기
         const response = await axios.get(fileUrl, {
             responseType: 'text' // 응답을 텍스트로 받기
         });
