@@ -33,4 +33,5 @@ jobs:
       - name: Run app.js
         run: |
           cd S3
-          node app.js  # app.js 실행
+          node app.js &  
+          sleep 10 # app.js 실행 및 10초간 대기
