@@ -3,7 +3,7 @@ FROM alpine:3.14 AS build
 
 # TOMCAT VERSION, HOME DIRECTORY 환경변수 설정
 ENV JAVA_HOME=/usr/lib/jvm/java-1.8-openjdk
-ENV TOMCAT_VERSION=9.0.95
+ENV TOMCAT_VERSION=9.0.96
 ENV CATALINA_HOME=/usr/local/tomcat
 
 # 필요한 Package 설치
